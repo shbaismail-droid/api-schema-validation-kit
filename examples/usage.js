@@ -1,14 +1,11 @@
-const path = require("path");
-const { validateSchema } = require("../src");
+const assert = require("assert");
+const { validateSchema } = require("../src/validator");
 
-const schemaPath = path.join(__dirname, "..", "schemas", "user.schema.json");
-const validDataPath = path.join(__dirname, "valid-user.json");
+const validResult = validateSchema("schemas/user.schema.json", "examples/valid-user.json");
+assert.strictEqual(validResult.valid, true, "Expected valid payload to pass validation");
 
-const result = validateSchema(schemaPath, validDataPath);
+const invalidResult = validateSchema("schemas/user.schema.json", "examples/invalid-user.json");
+assert.strictEqual(invalidResult.valid, false, "Expected invalid payload to fail validation");
+assert.ok(Array.isArray(invalidResult.errors), "Expected validation errors array");
 
-if (!result.valid) {
-  console.error("Validation failed:", JSON.stringify(result.errors, null, 2));
-  process.exit(1);
-}
-
-console.log("Valid user data accepted by the schema.");
+console.log("All validation tests passed.");

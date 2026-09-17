@@ -1,3 +1,15 @@
-node_modules
-npm-debug.log
-.DS_Store
+const { validateSchema, loadSchema } = require("../src");
+
+const schema = loadSchema("user.schema.json");
+const result = validateSchema(schema, {
+  id: 1,
+  name: "Sami",
+  email: "sami@example.com"
+}, { pretty: true });
+
+if (!result.valid) {
+  console.error("Payload validation failed.");
+  process.exit(1);
+}
+
+console.log("Payload validation succeeded.");

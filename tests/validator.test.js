@@ -1,19 +1,109 @@
-const assert = require("assert");
-const path = require("path");
-const { validateSchema } = require("../src/validator");
+# API Schema Validation Kit
 
-const rootDir = path.resolve(__dirname, "..");
-const schemaPath = path.join(rootDir, "schemas", "user.schema.json");
-const validDataPath = path.join(rootDir, "examples", "valid-user.json");
-const invalidDataPath = path.join(rootDir, "examples", "invalid-user.json");
+A lightweight, production-oriented toolkit for validating API payloads and data contracts with JSON Schema.
 
-const validResult = validateSchema(schemaPath, validDataPath);
-assert.strictEqual(validResult.valid, true, "Valid payload should pass validation.");
-assert.deepStrictEqual(validResult.errors, [], "Valid payload should not produce errors.");
+## What it does
 
-const invalidResult = validateSchema(schemaPath, invalidDataPath);
-assert.strictEqual(invalidResult.valid, false, "Invalid payload should fail validation.");
-assert.ok(Array.isArray(invalidResult.errors), "Invalid payload should include error details.");
-assert.ok(invalidResult.errors.length > 0, "At least one validation error should be returned.");
+This project helps teams and developers:
 
-console.log("All validation tests passed.");
+- Validate incoming API payloads before they reach business logic
+- Detect invalid data early in the pipeline
+- Reduce integration errors between services and clients
+- Standardize data contracts using JSON Schema
+- Keep validation logic reusable and testable
+
+## Features
+
+- JSON Schema validation using Ajv
+- Simple Node.js API for schema and payload verification
+- CLI support for quick local validation
+- Example schemas and sample payloads
+- Easy integration into Node.js applications
+
+## Installation
+
+```bash
+npm install
+```
+
+## Usage
+
+### CLI
+
+```bash
+node src/cli.js --schema schemas/user.schema.json --data examples/valid-user.json
+```
+
+Or the short form:
+
+```bash
+node src/cli.js schemas/user.schema.json examples/valid-user.json
+```
+
+### JavaScript API
+
+```javascript
+const { validateSchema, loadSchema } = require("./src");
+
+const schema = loadSchema("user.schema.json");
+const payload = {
+  id: 1,
+  name: "Sami",
+  email: "sami@example.com"
+};
+
+const result = validateSchema(schema, payload, { pretty: true });
+console.log(result.valid ? "Payload is valid" : "Payload is invalid");
+```
+
+### Example command
+
+```bash
+npm run validate -- --schema schemas/user.schema.json --data examples/valid-user.json
+```
+
+## Project structure
+
+```text
+api-schema-validation-kit/
+├── src/
+│   ├── cli.js
+│   ├── index.js
+│   ├── schemaLoader.js
+│   └── validator.js
+├── schemas/
+│   └── user.schema.json
+├── examples/
+│   ├── valid-user.json
+│   ├── invalid-user.json
+│   └── usage.js
+├── tests/
+│   └── validator.test.js
+├── README.md
+├── package.json
+├── LICENSE
+└── .gitignore
+```
+
+## Validation example
+
+```json
+{
+  "id": 1,
+  "name": "Sami",
+  "email": "sami@example.com"
+}
+```
+
+This payload matches the included schema.
+
+## Author
+
+Sami Hassan Baismail
+
+GitHub: https://github.com/shbaismail-droid
+Email: shbaismail@gmail.com
+
+## License
+
+MIT License

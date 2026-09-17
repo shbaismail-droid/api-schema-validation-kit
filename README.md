@@ -1,87 +1,64 @@
-# API Schema Validation Kit
+#!/usr/bin/env node
 
-A lightweight open-source toolkit for validating API payloads and JSON data using JSON Schema.
+const { validateSchema } = require("./validator");
 
-## Why this project exists
+function parseArgs(argv) {
+  const options = {
+    pretty: false,
+    help: false,
+    schema: null,
+    data: null
+  };
 
-Modern APIs often break because of inconsistent payloads, missing fields, invalid values, or incomplete contracts between frontend and backend teams. This toolkit helps you validate payloads early and keep your data contracts clear and predictable.
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
 
-## Features
+    if (arg === "--help" || arg === "-h") {
+      options.help = true;
+      continue;
+    }
 
-- Validate JSON payloads using JSON Schema.
-- Catch invalid API requests before they hit your service logic.
-- Support beginner-friendly examples and quick demos.
-- Keep validation logic modular and easy to test.
-- Works well with Node.js and other JavaScript projects.
+    if (arg === "--pretty") {
+      options.pretty = true;
+      continue;
+    }
 
-## Installation
+    if (arg === "--schema") {
+      options.schema = argv[i + 1];
+      i += 1;
+      continue;
+    }
 
-```bash
-git clone https://github.com/shbaismail-droid/api-schema-validation-kit.git
-cd api-schema-validation-kit
-npm install
-```
+    if (arg === "--data") {
+      options.data = argv[i + 1];
+      i += 1;
+      continue;
+    }
 
-## Usage
+    if (!options.schema) {
+      options.schema = arg;
+      continue;
+    }
 
-### Validate a schema against a JSON file
+    if (!options.data) {
+      options.data = arg;
+    }
+  }
 
-```bash
-node src/validator.js schemas/user.schema.json examples/valid-user.json
-```
-
-### Using the package in code
-
-```javascript
-const { validateSchema } = require("./src");
-
-const result = validateSchema("schemas/user.schema.json", "examples/valid-user.json");
-
-if (!result.valid) {
-  console.error(result.errors);
-  process.exit(1);
+  return options;
 }
 
-console.log("Payload is valid.");
-```
+function main() {
+  const options = parseArgs(process.argv.slice(2));
 
-## Run tests
+  if (options.help || (!options.schema && !options.data)) {
+    console.log("Usage: api-schema-validation-kit --schema <schema.json> --data <data.json> [--pretty]");
+    console.log("       api-schema-validation-kit schemas/user.schema.json examples/valid-user.json");
+    process.exit(options.help ? 0 : 1);
+  }
 
-```bash
-npm test
-```
+  const result = validateSchema(options.schema, options.data, { pretty: options.pretty });
+  process.exitCode = result.valid ? 0 : 1;
+}
 
-## Project structure
-
-- `src/` — validation logic
-- `schemas/` — JSON Schema examples
-- `examples/` — sample valid and invalid payloads
-- `tests/` — automated checks
-- `todo-app/` — basic frontend demo app
-- `joke-generator/` — another demo app
-
-## Demo apps
-
-This repository includes small UI demos to showcase frontend work and learning experiments:
-
-- `todo-app/` — a task list app with local storage
-- `joke-generator/` — a random joke generator using a public API
-
-## Services and consulting
-
-If you want help with:
-
-- JSON Schema design
-- API validation setup
-- Data contracts
-- Node.js integration
-- API review and testing
-
-You can contact:
-
-- GitHub: https://github.com/shbaismail-droid
-- Email: shbaismail@gmail.com
-
-## License
-
-MIT License
+main();
