@@ -1,20 +1,45 @@
 {
   "name": "api-schema-validation-kit",
-  "version": "1.0.0",
-  "description": "A lightweight JSON Schema validation toolkit for API payloads and data contracts.",
+  "version": "1.1.0",
+  "description": "A lightweight Node.js toolkit for validating API payloads and data contracts using JSON Schema.",
   "main": "src/index.js",
+  "bin": {
+    "api-schema-validation-kit": "src/cli.js"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./cli": "./src/cli.js"
+  },
+  "files": [
+    "src",
+    "schemas",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "validate": "node src/validator.js",
-    "test": "node tests/validator.test.js"
+    "test": "node tests/validator.test.js",
+    "start": "node src/cli.js"
   },
   "keywords": [
     "json-schema",
-    "api",
-    "validation",
+    "api-validation",
     "data-contracts",
-    "open-source"
+    "schema-validation",
+    "nodejs",
+    "open-source",
+    "api",
+    "validation"
   ],
-  "author": "Your Name",
+  "author": "Sami Hassan Baismail",
+  "homepage": "https://shbaismail-droid.github.io/api-schema-validation-kit/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shbaismail-droid/api-schema-validation-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shbaismail-droid/api-schema-validation-kit/issues"
+  },
   "license": "MIT",
   "dependencies": {
     "ajv": "^8.17.0"
