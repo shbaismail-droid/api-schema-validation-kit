@@ -1,17 +1,40 @@
-const { execSync } = require("child_process");
+const assert = require("assert");
+const { validateData, validateSchemaFile } = require("../src/index");
+const { loadSchema } = require("../src/schemaLoader");
 
-try {
-  execSync("node src/validator.js schemas/user.schema.json examples/valid-user.json", { stdio: "inherit" });
-  console.log("Valid test passed.");
-} catch (error) {
-  console.error("Valid test failed.");
-  process.exit(1);
-}
+const userSchema = loadSchema("./schemas/user.schema.json");
 
-try {
-  execSync("node src/validator.js schemas/user.schema.json examples/invalid-user.json", { stdio: "inherit" });
-  console.log("Invalid test should have failed.");
-  process.exit(1);
-} catch (error) {
-  console.log("Invalid test passed as expected.");
-}
+const validUser = {
+  id: 1,
+  name: "Ahmed",
+  email: "ahmed@example.com",
+  age: 28
+};
+
+const invalidUser = {
+  id: 0,
+  name: "A",
+  email: "not-an-email",
+  age: 200
+};
+
+const validResult = validateData(userSchema, validUser);
+assert.strictEqual(validResult.valid, true, "Valid payload should pass validation");
+
+const invalidResult = validateData(userSchema, invalidUser);
+assert.strictEqual(invalidResult.valid, false, "Invalid payload should fail validation");
+assert.ok(invalidResult.errors.length > 0, "Errors should be returned for invalid payload");
+
+assert.strictEqual(
+  validateSchemaFile("schemas/user.schema.json", "examples/valid-user.json"),
+  true,
+  "Valid file-based validation should succeed"
+);
+
+assert.strictEqual(
+  validateSchemaFile("schemas/user.schema.json", "examples/invalid-user.json"),
+  false,
+  "Invalid file-based validation should fail"
+);
+
+console.log("All validation tests passed.");
