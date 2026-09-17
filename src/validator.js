@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const fs = require("fs");
 const path = require("path");
 const Ajv = require("ajv");
@@ -17,8 +19,8 @@ function validateSchema(schemaPath, dataPath) {
     const valid = validate(data);
 
     if (!valid) {
-      console.log("Validation failed.");
-      console.log(JSON.stringify(validate.errors, null, 2));
+      console.error("Validation failed.");
+      console.error(JSON.stringify(validate.errors, null, 2));
       return false;
     }
 
@@ -32,12 +34,12 @@ function validateSchema(schemaPath, dataPath) {
   }
 }
 
-if (require.main === module) {
+function runCli() {
   const schemaPath = process.argv[2];
   const dataPath = process.argv[3];
 
   if (!schemaPath || !dataPath) {
-    console.log("Usage: node src/validator.js <schema.json> <data.json>");
+    console.error("Usage: node src/validator.js <schema.json> <data.json>");
     process.exit(1);
   }
 
@@ -55,7 +57,11 @@ if (require.main === module) {
   }
 
   const isValid = validateSchema(schemaFullPath, dataFullPath);
-  process.exitCode = isValid ? 0 : 1;
+  process.exit(isValid ? 0 : 1);
 }
 
-module.exports = { validateSchema };
+if (require.main === module) {
+  runCli();
+}
+
+module.exports = { validateSchema, runCli };

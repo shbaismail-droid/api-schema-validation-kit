@@ -3,6 +3,14 @@
   "version": "1.0.0",
   "description": "A lightweight JSON Schema validation toolkit for API payloads and data contracts.",
   "main": "src/index.js",
+  "bin": {
+    "api-schema-validate": "src/validator.js"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./validator": "./src/validator.js",
+    "./schema-loader": "./src/schemaLoader.js"
+  },
   "scripts": {
     "validate": "node src/validator.js",
     "test": "node tests/validator.test.js"
