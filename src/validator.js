@@ -2,23 +2,50 @@ const fs = require("fs");
 const path = require("path");
 const Ajv = require("ajv");
 
-function validateSchema(schemaPath, dataPath) {
+function readJsonInput(input, inputName) {
+  if (typeof input === "string") {
+    const targetPath = path.resolve(input);
+
+    if (!fs.existsSync(targetPath)) {
+      throw new Error(`${inputName} file not found: ${targetPath}`);
+    }
+
+    return JSON.parse(fs.readFileSync(targetPath, "utf8"));
+  }
+
+  if (input && typeof input === "object") {
+    return input;
+  }
+
+  throw new Error(`${inputName} must be a JSON object or a path to a JSON file.`);
+}
+
+function validateData(schema, data, options = {}) {
+  const ajv = new Ajv({
+    allErrors: true,
+    strict: false,
+    validateSchema: false,
+    ...options
+  });
+
+  const validate = ajv.compile(schema);
+  const valid = validate(data);
+
+  return {
+    valid,
+    errors: validate.errors || []
+  };
+}
+
+function validateSchema(schemaInput, dataInput, options = {}) {
   try {
-    const ajv = new Ajv({
-      allErrors: true,
-      strict: false,
-      validateSchema: false
-    });
+    const schema = readJsonInput(schemaInput, "Schema");
+    const data = readJsonInput(dataInput, "Data");
+    const result = validateData(schema, data, options);
 
-    const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
-    const data = JSON.parse(fs.readFileSync(dataPath, "utf8"));
-
-    const validate = ajv.compile(schema);
-    const valid = validate(data);
-
-    if (!valid) {
+    if (!result.valid) {
       console.log("Validation failed.");
-      console.log(JSON.stringify(validate.errors, null, 2));
+      console.log(JSON.stringify(result.errors, null, 2));
       return false;
     }
 
@@ -32,30 +59,25 @@ function validateSchema(schemaPath, dataPath) {
   }
 }
 
+function validateSchemaFile(schemaPath, dataPath, options = {}) {
+  return validateSchema(schemaPath, dataPath, options);
+}
+
 if (require.main === module) {
-  const schemaPath = process.argv[2];
-  const dataPath = process.argv[3];
+  const schemaInput = process.argv[2];
+  const dataInput = process.argv[3];
 
-  if (!schemaPath || !dataPath) {
-    console.log("Usage: node src/validator.js <schema.json> <data.json>");
+  if (!schemaInput || !dataInput) {
+    console.log("Usage: node src/validator.js <schema.json|schema-object> <data.json|data-object>");
     process.exit(1);
   }
 
-  const schemaFullPath = path.resolve(schemaPath);
-  const dataFullPath = path.resolve(dataPath);
-
-  if (!fs.existsSync(schemaFullPath)) {
-    console.error(`Schema file not found: ${schemaFullPath}`);
-    process.exit(1);
-  }
-
-  if (!fs.existsSync(dataFullPath)) {
-    console.error(`Data file not found: ${dataFullPath}`);
-    process.exit(1);
-  }
-
-  const isValid = validateSchema(schemaFullPath, dataFullPath);
+  const isValid = validateSchema(schemaInput, dataInput);
   process.exitCode = isValid ? 0 : 1;
 }
 
-module.exports = { validateSchema };
+module.exports = {
+  validateSchema,
+  validateSchemaFile,
+  validateData
+};
