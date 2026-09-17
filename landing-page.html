@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Schema Validation Kit</title>
+    <meta
+      name="description"
+      content="Validate API payloads and improve data contracts using JSON Schema with a beginner-friendly toolkit."
+    />
+    <style>
+      :root {
+        --bg: #0b1120;
+        --bg-soft: #111827;
+        --panel: #121b2d;
+        --panel-2: #1a2338;
+        --text: #edf2ff;
+        --muted: #b7c1d9;
+        --primary: #7c9cff;
+        --primary-2: #8ef0d5;
+        --accent: #a78bfa;
+        --success: #34d399;
+        --border: rgba(255,255,255,0.08);
+        --shadow: rgba(0,0,0,0.28);
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        font-family: Inter, "Segoe UI", sans-serif;
+        background: linear-gradient(180deg, #0b1120 0%, #111827 100%);
+        color: var(--text);
+      }
+
+      a { color: inherit; text-decoration: none; }
+
+      .container {
+        width: min(1160px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(12px);
+        background: rgba(11,17,32,0.7);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .topbar-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 72px;
+      }
+
+      .brand {
+        font-weight: 800;
+        letter-spacing: 0.04em;
+      }
+
+      .nav {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.96rem;
+      }
+
+      .nav a:hover { color: var(--text); }
+
+      .cta-button,
+      .secondary-button,
+      .pricing-card .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        border-radius: 12px;
+        padding: 0 20px;
+        font-weight: 700;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .cta-button, .pricing-card.featured .button {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        box-shadow: 0 12px 28px rgba(124, 156, 255, 0.3);
+      }
+
+      .secondary-button {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+
+      .cta-button:hover, .secondary-button:hover, .pricing-card .button:hover {
+        transform: translateY(-2px);
+      }
+
+      .hero {
+        padding: 72px 0 40px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 36px;
+        align-items: center;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        letter-spacing: 0.12em;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        color: var(--primary-2);
+        font-weight: 700;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0 0 18px;
+        font-size: clamp(2.5rem, 5vw, 4.5rem);
+        line-height: 1.05;
+        letter-spacing: -0.06em;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 1.08rem;
+        max-width: 620px;
+        line-height: 1.7;
+        margin: 0 0 28px;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+
+      .mini-stats {
+        display: flex;
+        gap: 26px;
+        flex-wrap: wrap;
+        color: var(--muted);
+      }
+
+      .mini-stat strong {
+        display: block;
+        color: var(--text);
+        font-size: 1.4rem;
+        margin-bottom: 4px;
+      }
+
+      .demo-panel {
+        background: linear-gradient(180deg, rgba(17,24,39,0.9), rgba(17,23,38,0.95));
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: 0 25px 60px var(--shadow);
+        overflow: hidden;
+      }
+
+      .demo-topbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 20px 20px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .red { background: #ff5f57; }
+      .yellow { background: #febc2e; }
+      .green { background: #28c840; }
+
+      .code-box {
+        padding: 24px 20px 16px;
+        font-family: "SFMono-Regular", Consolas, monospace;
+        color: var(--text);
+        line-height: 1.7;
+        font-size: 0.88rem;
+      }
+
+      .code-box .comment { color: #86efac; }
+      .code-box .key { color: #7dd3fc; }
+      .code-box .string { color: #c4b5fd; }
+      .code-box .num { color: #fbbf24; }
+
+      section {
+        padding: 60px 0;
+      }
+
+      .section-header {
+        margin-bottom: 28px;
+      }
+
+      .section-header h2 {
+        margin: 0 0 12px;
+        font-size: clamp(2rem, 4vw, 3rem);
+        letter-spacing: -0.05em;
+      }
+
+      .section-header p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+        max-width: 760px;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+      }
+
+      .feature-card,
+      .pricing-card {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+      }
+
+      .feature-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, rgba(124,156,255,0.18), rgba(167,139,250,0.18));
+        font-size: 1.5rem;
+        margin-bottom: 16px;
+      }
+
+      .feature-card h3,
+      .pricing-card h3 {
+        margin: 0 0 8px;
+        font-size: 1.3rem;
+      }
+
+      .feature-card p,
+      .pricing-card p,
+      .pricing-card li {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+      }
+
+      .pricing-card {
+        position: relative;
+      }
+
+      .pricing-card.featured {
+        border-color: rgba(124,156,255,0.55);
+        background: linear-gradient(180deg, rgba(124,156,255,0.08), rgba(255,255,255,0.02));
+      }
+
+      .pricing-tag {
+        display: inline-flex;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        background: rgba(124,156,255,0.12);
+        color: var(--primary-2);
+        margin-bottom: 16px;
+      }
+
+      .price {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin: 6px 0 14px;
+      }
+
+      .price strong {
+        font-size: 2.4rem;
+        letter-spacing: -0.05em;
+      }
+
+      .pricing-card ul {
+        list-style: none;
+        margin: 18px 0 22px;
+        padding: 0;
+      }
+
+      .pricing-card li {
+        margin-bottom: 10px;
+        position: relative;
+        padding-left: 24px;
+      }
+
+      .pricing-card li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: var(--success);
+        font-weight: 800;
+      }
+
+      .button-row {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .cta-panel {
+        background: linear-gradient(135deg, rgba(124,156,255,0.12), rgba(167,139,250,0.12));
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 32px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .cta-panel h3 {
+        margin: 0 0 8px;
+        font-size: clamp(1.7rem, 3vw, 2.5rem);
+      }
+
+      .cta-panel p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .footer {
+        padding: 28px 0 60px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 900px) {
+        .hero-grid,
+        .feature-grid,
+        .pricing-grid,
+        .cta-panel {
+          grid-template-columns: 1fr;
+          display: grid;
+        }
+
+        .nav {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <div class="brand">API Schema Validation Kit</div>
+        <nav class="nav">
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#contact">Contact</a>
+          <a class="cta-button" href="#pricing">Get started</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+            <div class="eyebrow">JSON Schema • API • Data Contracts</div>
+            <h1>Validate API payloads before they break your app.</h1>
+            <p class="subtitle">
+              Catch invalid requests early, improve data contracts, and reduce integration issues between
+              frontend, backend, and third-party APIs with a simple developer-friendly toolkit.
+            </p>
+            <div class="hero-actions">
+              <a class="cta-button" href="#pricing">Start now</a>
+              <a class="secondary-button" href="https://github.com/shbaismail-droid/api-schema-validation-kit" target="_blank" rel="noreferrer">View on GitHub</a>
+            </div>
+            <div class="mini-stats">
+              <div><strong>Open</strong>source</div>
+              <div><strong>Node.js</strong>ready</div>
+              <div><strong>JSON</strong>Schema</div>
+            </div>
+          </div>
+
+          <div class="demo-panel" aria-label="Example validation output">
+            <div class="demo-topbar">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <div class="code-box">
+              <div><span class="comment">// Validate request payload</span></div>
+              <div><span class="key">const</span> result = validateSchema(schema, payload);</div>
+              <div><span class="key">if</span> (!result.valid) {</div>
+              <div>&nbsp;&nbsp;<span class="key">console</span>.error(result.errors);</div>
+              <div>&nbsp;&nbsp;<span class="key">return</span> <span class="string">"400 Bad Request"</span>;</div>
+              <div>}</div>
+              <div><span class="comment">// ✅ payload matches your API contract</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features">
+        <div class="container">
+          <div class="section-header">
+            <h2>Why teams use it</h2>
+            <p>
+              Validate data at the boundary, make rules explicit, and give developers a shared language for
+              contract safety across API integrations.
+            </p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-card">
+              <div class="feature-icon">✓</div>
+              <h3>Fast validation</h3>
+              <p>Check payloads immediately and reject malformed or incomplete requests before they reach your logic.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon">🔒</div>
+              <h3>Contract clarity</h3>
+              <p>Define clearly what data is valid and what is not so frontend and backend teams work from the same rules.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon">⚙️</div>
+              <h3>Easy integration</h3>
+              <p>Use it with Node.js projects, API gateways, or internal validation layers that need stronger contracts.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing">
+        <div class="container">
+          <div class="section-header">
+            <h2>Simple pricing</h2>
+            <p>Start free, upgrade when you need more support, governance, and team-ready schema workflows.</p>
+          </div>
+
+          <div class="pricing-grid">
+            <article class="pricing-card">
+              <div class="pricing-tag">Community</div>
+              <h3>Free</h3>
+              <div class="price"><strong>$0</strong><span>/month</span></div>
+              <p>Perfect for learning, build testing, and open-source exploration.</p>
+              <ul>
+                <li>Core JSON Schema validation</li>
+                <li>Docs and examples</li>
+                <li>GitHub community support</li>
+              </ul>
+              <a class="button secondary-button" href="https://github.com/shbaismail-droid/api-schema-validation-kit" target="_blank" rel="noreferrer">Use free</a>
+            </article>
+
+            <article class="pricing-card featured">
+              <div class="pricing-tag">Most popular</div>
+              <h3>Pro</h3>
+              <div class="price"><strong>$19</strong><span>/month</span></div>
+              <p>For solo developers and small teams shipping production APIs.</p>
+              <ul>
+                <li>Advanced validation templates</li>
+                <li>Better error reporting</li>
+                <li>Priority support</li>
+                <li>Premium schema examples</li>
+              </ul>
+              <a class="button" href="#contact">Get pro</a>
+            </article>
+
+            <article class="pricing-card">
+              <div class="pricing-tag">Business</div>
+              <h3>Team</h3>
+              <div class="price"><strong>$79</strong><span>/month</span></div>
+              <p>For organizations that want stronger API governance and shared contracts.</p>
+              <ul>
+                <li>Multi-user access</li>
+                <li>Shared schema library</li>
+                <li>API contract support</li>
+                <li>Team onboarding</li>
+              </ul>
+              <a class="button secondary-button" href="#contact">Talk to sales</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact">
+        <div class="container">
+          <div class="cta-panel">
+            <div>
+              <h3>Need a custom solution?</h3>
+              <p>For API reviews, schema design, validation setup, and production guidance.</p>
+            </div>
+            <div class="button-row">
+              <a class="cta-button" href="mailto:shbaismail@gmail.com">Email me</a>
+              <a class="secondary-button" href="https://github.com/shbaismail-droid" target="_blank" rel="noreferrer">GitHub</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">© 2026 API Schema Validation Kit — Built for safer API contracts.</div>
+    </footer>
+  </body>
+</html>
