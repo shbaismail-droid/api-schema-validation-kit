@@ -1,43 +1,41 @@
-# api-schema-validation-kit
+# API Schema Validation Kit
 
-A lightweight open-source toolkit for validating API payloads and JSON documents using JSON Schema.
+أداة مفتوحة المصدر للتحقق من بيانات JSON وبيانات API باستخدام JSON Schema.
 
-## Overview
+## ماذا يفعل المشروع؟
 
-This project helps teams validate incoming API data before it reaches production systems. It reduces data-related issues, improves API reliability, and makes validation easier to manage across backend services.
+يساعد المشروع المطورين والشركات على:
 
-The toolkit is designed for developers and teams who want to:
-- validate request and response payloads
-- enforce data contracts
-- catch invalid JSON early
-- improve API quality and consistency
-- reduce production bugs caused by malformed data
+- التحقق من صحة بيانات API
+- اكتشاف البيانات الخاطئة قبل وصولها إلى النظام
+- تقليل أخطاء التكامل بين التطبيقات
+- تحسين جودة البيانات
+- إنشاء قواعد واضحة للبيانات
 
-## Why this project matters
-
-Many backend issues are caused by malformed or inconsistent API payloads. Without validation, invalid requests can lead to:
-- broken integrations
-- failed business logic
-- confusing runtime errors
-- inconsistent data flow between systems
-
-This project provides a simple, reusable validation layer built around JSON Schema.
-
-## Features
-
-- Validate JSON files against JSON Schema
-- Show readable validation errors
-- Support API payload validation workflows
-- Easy to integrate into Node.js projects
-- Useful for testing, CI, and internal tooling
-
-## Project Author
-
-Sami Hassan Baismail  
-GitHub: https://github.com/shbaismail-droid  
-Email: shbaismail@gmail.com
-
-## Installation
+## طريقة الاستخدام
 
 ```bash
 npm install
+npm run validate -- schemas/user.schema.json examples/valid-user.json
+```
+
+## صاحب المشروع
+
+Sami Hassan Baismail
+
+GitHub: https://github.com/shbaismail-droid
+
+Email: shbaismail@gmail.com
+
+## الخدمات المدفوعة
+
+- مراجعة JSON Schema
+- إعداد التحقق من بيانات API
+- تصميم Data Contracts
+- ربط التحقق مع مشاريع Node.js
+- صيانة وتحديث Schemas
+- الدعم الفني والاستشارات
+
+## الترخيص
+
+MIT License
