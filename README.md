@@ -1,41 +1,87 @@
 # API Schema Validation Kit
 
-أداة مفتوحة المصدر للتحقق من بيانات JSON وبيانات API باستخدام JSON Schema.
+A lightweight open-source toolkit for validating API payloads and JSON data using JSON Schema.
 
-## ماذا يفعل المشروع؟
+## Why this project exists
 
-يساعد المشروع المطورين والشركات على:
+Modern APIs often break because of inconsistent payloads, missing fields, invalid values, or incomplete contracts between frontend and backend teams. This toolkit helps you validate payloads early and keep your data contracts clear and predictable.
 
-- التحقق من صحة بيانات API
-- اكتشاف البيانات الخاطئة قبل وصولها إلى النظام
-- تقليل أخطاء التكامل بين التطبيقات
-- تحسين جودة البيانات
-- إنشاء قواعد واضحة للبيانات
+## Features
 
-## طريقة الاستخدام
+- Validate JSON payloads using JSON Schema.
+- Catch invalid API requests before they hit your service logic.
+- Support beginner-friendly examples and quick demos.
+- Keep validation logic modular and easy to test.
+- Works well with Node.js and other JavaScript projects.
+
+## Installation
 
 ```bash
+git clone https://github.com/shbaismail-droid/api-schema-validation-kit.git
+cd api-schema-validation-kit
 npm install
-npm run validate -- schemas/user.schema.json examples/valid-user.json
 ```
 
-## صاحب المشروع
+## Usage
 
-Sami Hassan Baismail
+### Validate a schema against a JSON file
 
-GitHub: https://github.com/shbaismail-droid
+```bash
+node src/validator.js schemas/user.schema.json examples/valid-user.json
+```
 
-Email: shbaismail@gmail.com
+### Using the package in code
 
-## الخدمات المدفوعة
+```javascript
+const { validateSchema } = require("./src");
 
-- مراجعة JSON Schema
-- إعداد التحقق من بيانات API
-- تصميم Data Contracts
-- ربط التحقق مع مشاريع Node.js
-- صيانة وتحديث Schemas
-- الدعم الفني والاستشارات
+const result = validateSchema("schemas/user.schema.json", "examples/valid-user.json");
 
-## الترخيص
+if (!result.valid) {
+  console.error(result.errors);
+  process.exit(1);
+}
+
+console.log("Payload is valid.");
+```
+
+## Run tests
+
+```bash
+npm test
+```
+
+## Project structure
+
+- `src/` — validation logic
+- `schemas/` — JSON Schema examples
+- `examples/` — sample valid and invalid payloads
+- `tests/` — automated checks
+- `todo-app/` — basic frontend demo app
+- `joke-generator/` — another demo app
+
+## Demo apps
+
+This repository includes small UI demos to showcase frontend work and learning experiments:
+
+- `todo-app/` — a task list app with local storage
+- `joke-generator/` — a random joke generator using a public API
+
+## Services and consulting
+
+If you want help with:
+
+- JSON Schema design
+- API validation setup
+- Data contracts
+- Node.js integration
+- API review and testing
+
+You can contact:
+
+- GitHub: https://github.com/shbaismail-droid
+- Email: shbaismail@gmail.com
+
+## License
 
 MIT License

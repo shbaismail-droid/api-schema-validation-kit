@@ -1,17 +1,19 @@
-const { execSync } = require("child_process");
+const assert = require("assert");
+const path = require("path");
+const { validateSchema } = require("../src/validator");
 
-try {
-  execSync("node src/validator.js schemas/user.schema.json examples/valid-user.json", { stdio: "inherit" });
-  console.log("Valid test passed.");
-} catch (error) {
-  console.error("Valid test failed.");
-  process.exit(1);
-}
+const rootDir = path.resolve(__dirname, "..");
+const schemaPath = path.join(rootDir, "schemas", "user.schema.json");
+const validDataPath = path.join(rootDir, "examples", "valid-user.json");
+const invalidDataPath = path.join(rootDir, "examples", "invalid-user.json");
 
-try {
-  execSync("node src/validator.js schemas/user.schema.json examples/invalid-user.json", { stdio: "inherit" });
-  console.log("Invalid test should have failed.");
-  process.exit(1);
-} catch (error) {
-  console.log("Invalid test passed as expected.");
-}
+const validResult = validateSchema(schemaPath, validDataPath);
+assert.strictEqual(validResult.valid, true, "Valid payload should pass validation.");
+assert.deepStrictEqual(validResult.errors, [], "Valid payload should not produce errors.");
+
+const invalidResult = validateSchema(schemaPath, invalidDataPath);
+assert.strictEqual(invalidResult.valid, false, "Invalid payload should fail validation.");
+assert.ok(Array.isArray(invalidResult.errors), "Invalid payload should include error details.");
+assert.ok(invalidResult.errors.length > 0, "At least one validation error should be returned.");
+
+console.log("All validation tests passed.");

@@ -1,7 +1,7 @@
 {
   "name": "api-schema-validation-kit",
-  "version": "1.0.0",
-  "description": "A lightweight JSON Schema validation toolkit for API payloads and data contracts.",
+  "version": "1.1.0",
+  "description": "A lightweight JSON Schema validation toolkit for API payloads and Data Contracts.",
   "main": "src/index.js",
   "scripts": {
     "validate": "node src/validator.js",
@@ -12,9 +12,10 @@
     "api",
     "validation",
     "data-contracts",
-    "open-source"
+    "open-source",
+    "ajv"
   ],
-  "author": "Your Name",
+  "author": "Sami Hassan Baismail",
   "license": "MIT",
   "dependencies": {
     "ajv": "^8.17.0"
