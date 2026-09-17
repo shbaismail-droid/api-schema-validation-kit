@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة الطقس</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="weather-card">
+        <header class="search-bar">
+          <input
+            id="cityInput"
+            type="text"
+            placeholder="اكتب اسم المدينة..."
+            aria-label="اسم المدينة"
+            autocomplete="off"
+          />
+          <button id="searchButton" type="button">بحث</button>
+        </header>
+
+        <div id="status" class="status" aria-live="polite"></div>
+
+        <section class="current-weather" id="currentWeather" aria-live="polite">
+          <div class="city-row">
+            <div>
+              <p class="label">المدينة</p>
+              <h1 id="cityName">--</h1>
+            </div>
+            <div id="weatherIcon" class="weather-icon" aria-label="حالة الطقس">☀️</div>
+          </div>
+
+          <div class="temp-row">
+            <span id="temperature">--</span>
+            <span class="unit">°C</span>
+          </div>
+
+          <p id="weatherDescription" class="description">--</p>
+
+          <div class="stats-grid">
+            <div class="stat-box">
+              <span class="label">الرطوبة</span>
+              <strong id="humidity">--</strong>
+            </div>
+            <div class="stat-box">
+              <span class="label">سرعة الرياح</span>
+              <strong id="windSpeed">--</strong>
+            </div>
+            <div class="stat-box">
+              <span class="label">الضغط</span>
+              <strong id="pressure">--</strong>
+            </div>
+            <div class="stat-box">
+              <span class="label">الإحساس</span>
+              <strong id="feelsLike">--</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="forecast">
+          <h2>التوقعات</h2>
+          <div id="forecastList" class="forecast-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
